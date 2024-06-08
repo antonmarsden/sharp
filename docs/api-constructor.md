@@ -1,9 +1,13 @@
 ## Sharp
+> Sharp
+
 
 **Emits**: <code>Sharp#event:info</code>, <code>Sharp#event:warning</code>  
 <a name="new_Sharp_new"></a>
 
 ### new
+> new Sharp([input], [options])
+
 Constructor factory to create an instance of `sharp`, to which further methods are chained.
 
 JPEG, PNG, WebP, GIF, AVIF or TIFF format image data can be streamed out from this object.
@@ -12,6 +16,10 @@ When using Stream based output, derived attributes are available from the `info`
 Non-critical problems encountered during processing are emitted as `warning` events.
 
 Implements the [stream.Duplex](http://nodejs.org/api/stream.html#stream_class_stream_duplex) class.
+
+When loading more than one page/frame of an animated image,
+these are combined as a vertically-stacked "toilet roll" image
+where the overall height is the `pageHeight` multiplied by the number of `pages`.
 
 **Throws**:
 
@@ -22,7 +30,7 @@ Implements the [stream.Duplex](http://nodejs.org/api/stream.html#stream_class_st
 | --- | --- | --- | --- |
 | [input] | <code>Buffer</code> \| <code>ArrayBuffer</code> \| <code>Uint8Array</code> \| <code>Uint8ClampedArray</code> \| <code>Int8Array</code> \| <code>Uint16Array</code> \| <code>Int16Array</code> \| <code>Uint32Array</code> \| <code>Int32Array</code> \| <code>Float32Array</code> \| <code>Float64Array</code> \| <code>string</code> |  | if present, can be  a Buffer / ArrayBuffer / Uint8Array / Uint8ClampedArray containing JPEG, PNG, WebP, AVIF, GIF, SVG or TIFF image data, or  a TypedArray containing raw pixel image data, or  a String containing the filesystem path to an JPEG, PNG, WebP, AVIF, GIF, SVG or TIFF image file.  JPEG, PNG, WebP, AVIF, GIF, SVG, TIFF or raw pixel image data can be streamed into the object when not present. |
 | [options] | <code>Object</code> |  | if present, is an Object with optional attributes. |
-| [options.failOn] | <code>string</code> | <code>&quot;&#x27;warning&#x27;&quot;</code> | when to abort processing of invalid pixel data, one of (in order of sensitivity): 'none' (least), 'truncated', 'error' or 'warning' (most), highers level imply lower levels, invalid metadata will always abort. |
+| [options.failOn] | <code>string</code> | <code>&quot;&#x27;warning&#x27;&quot;</code> | When to abort processing of invalid pixel data, one of (in order of sensitivity, least to most): 'none', 'truncated', 'error', 'warning'. Higher levels imply lower levels. Invalid metadata will always abort. |
 | [options.limitInputPixels] | <code>number</code> \| <code>boolean</code> | <code>268402689</code> | Do not process input images where the number of pixels  (width x height) exceeds this limit. Assumes image dimensions contained in the input metadata can be trusted.  An integral Number of pixels, zero or false to remove limit, true to use default limit of 268402689 (0x3FFF x 0x3FFF). |
 | [options.unlimited] | <code>boolean</code> | <code>false</code> | Set this to `true` to remove safety features that help prevent memory exhaustion (JPEG, PNG, SVG, HEIF). |
 | [options.sequentialRead] | <code>boolean</code> | <code>true</code> | Set this to `false` to use random access rather than sequential read. Some operations will do this automatically. |
@@ -58,7 +66,7 @@ Implements the [stream.Duplex](http://nodejs.org/api/stream.html#stream_class_st
 | [options.text.dpi] | <code>number</code> | <code>72</code> | the resolution (size) at which to render the text. Does not take effect if `height` is specified. |
 | [options.text.rgba] | <code>boolean</code> | <code>false</code> | set this to true to enable RGBA output. This is useful for colour emoji rendering, or support for pango markup features like `<span foreground="red">Red!</span>`. |
 | [options.text.spacing] | <code>number</code> | <code>0</code> | text line height in points. Will use the font line height if none is specified. |
-| [options.text.wrap] | <code>string</code> | <code>&quot;&#x27;word&#x27;&quot;</code> | word wrapping style when width is provided, one of: 'word', 'char', 'charWord' (prefer char, fallback to word) or 'none'. |
+| [options.text.wrap] | <code>string</code> | <code>&quot;&#x27;word&#x27;&quot;</code> | word wrapping style when width is provided, one of: 'word', 'char', 'word-char' (prefer word, fallback to char) or 'none'. |
 
 **Example**  
 ```js
@@ -71,20 +79,22 @@ sharp('input.jpg')
 ```
 **Example**  
 ```js
-// Read image data from readableStream,
+// Read image data from remote URL,
 // resize to 300 pixels wide,
 // emit an 'info' event with calculated dimensions
 // and finally write image data to writableStream
-var transformer = sharp()
+const { body } = fetch('https://...');
+const readableStream = Readable.fromWeb(body);
+const transformer = sharp()
   .resize(300)
-  .on('info', function(info) {
-    console.log('Image height is ' + info.height);
+  .on('info', ({ height }) => {
+    console.log(`Image height is ${height}`);
   });
 readableStream.pipe(transformer).pipe(writableStream);
 ```
 **Example**  
 ```js
-// Create a blank 300x200 PNG image of semi-transluent red pixels
+// Create a blank 300x200 PNG image of semi-translucent red pixels
 sharp({
   create: {
     width: 300,
@@ -159,6 +169,8 @@ await sharp({
 
 
 ## clone
+> clone() ⇒ [<code>Sharp</code>](#Sharp)
+
 Take a "snapshot" of the Sharp instance, returning a new instance.
 Cloned instances inherit the input of their parent instance.
 This allows multiple output Streams and therefore multiple processing pipelines to share a single input Stream.

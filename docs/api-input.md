@@ -1,4 +1,6 @@
 ## metadata
+> metadata([callback]) ⇒ <code>Promise.&lt;Object&gt;</code> \| <code>Sharp</code>
+
 Fast access to (uncached) image metadata without decoding any compressed pixel data.
 
 This is read from the header of the input image.
@@ -22,6 +24,7 @@ A `Promise` is returned when `callback` is not provided.
 - `isProgressive`: Boolean indicating whether the image is interlaced using a progressive scan
 - `pages`: Number of pages/frames contained within the image, with support for TIFF, HEIF, PDF, animated GIF and animated WebP
 - `pageHeight`: Number of pixels high each page in a multi-page image will be.
+- `paletteBitDepth`: Bit depth of palette-based image (GIF, PNG).
 - `loop`: Number of times to loop an animated image, zero refers to a continuous loop.
 - `delay`: Delay in ms between each page in an animated image, provided as an array of integers.
 - `pagePrimary`: Number of the primary page in a HEIF image
@@ -80,6 +83,8 @@ function getNormalSize({ width, height, orientation }) {
 
 
 ## stats
+> stats([callback]) ⇒ <code>Promise.&lt;Object&gt;</code>
+
 Access to pixel-derived image statistics for every channel in the image.
 A `Promise` is returned when `callback` is not provided.
 

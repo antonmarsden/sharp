@@ -1,5 +1,8 @@
 ## versions
-An Object containing the version numbers of sharp, libvips and its dependencies.
+> versions
+
+An Object containing the version numbers of sharp, libvips
+and (when using prebuilt binaries) its dependencies.
 
 
 **Example**  
@@ -9,6 +12,8 @@ console.log(sharp.versions);
 
 
 ## interpolators
+> interpolators : <code>enum</code>
+
 An Object containing the available interpolators and their proper values
 
 
@@ -27,6 +32,8 @@ An Object containing the available interpolators and their proper values
 
 
 ## format
+> format ⇒ <code>Object</code>
+
 An Object containing nested boolean values representing the available input and output formats/methods.
 
 
@@ -36,18 +43,9 @@ console.log(sharp.format);
 ```
 
 
-## vendor
-An Object containing the platform and architecture
-of the current and installed vendored binaries.
-
-
-**Example**  
-```js
-console.log(sharp.vendor);
-```
-
-
 ## queue
+> queue
+
 An EventEmitter that emits a `change` event when a task is either:
 - queued, waiting for _libuv_ to provide a worker thread
 - complete
@@ -62,6 +60,8 @@ sharp.queue.on('change', function(queueLength) {
 
 
 ## cache
+> cache([options]) ⇒ <code>Object</code>
+
 Gets or, when options are provided, sets the limits of _libvips'_ operation cache.
 Existing entries in the cache will be trimmed after any change in limits.
 This method always returns cache statistics,
@@ -89,6 +89,8 @@ sharp.cache(false);
 
 
 ## concurrency
+> concurrency([concurrency]) ⇒ <code>number</code>
+
 Gets or, when a concurrency is provided, sets
 the maximum number of threads _libvips_ should use to process _each image_.
 These are from a thread pool managed by glib,
@@ -132,6 +134,8 @@ sharp.concurrency(0); // 4
 
 
 ## counters
+> counters() ⇒ <code>Object</code>
+
 Provides access to internal task counters.
 - queue is the number of tasks this module has queued waiting for _libuv_ to provide a worker thread from its pool.
 - process is the number of resize tasks currently being processed.
@@ -144,8 +148,10 @@ const counters = sharp.counters(); // { queue: 2, process: 4 }
 
 
 ## simd
+> simd([simd]) ⇒ <code>boolean</code>
+
 Get and set use of SIMD vector unit instructions.
-Requires libvips to have been compiled with liborc support.
+Requires libvips to have been compiled with highway support.
 
 Improves the performance of `resize`, `blur` and `sharpen` operations
 by taking advantage of the SIMD vector unit of the CPU, e.g. Intel SSE and ARM NEON.
@@ -159,10 +165,69 @@ by taking advantage of the SIMD vector unit of the CPU, e.g. Intel SSE and ARM N
 **Example**  
 ```js
 const simd = sharp.simd();
-// simd is `true` if the runtime use of liborc is currently enabled
+// simd is `true` if the runtime use of highway is currently enabled
 ```
 **Example**  
 ```js
 const simd = sharp.simd(false);
-// prevent libvips from using liborc at runtime
+// prevent libvips from using highway at runtime
+```
+
+
+## block
+> block(options)
+
+Block libvips operations at runtime.
+
+This is in addition to the `VIPS_BLOCK_UNTRUSTED` environment variable,
+which when set will block all "untrusted" operations.
+
+
+**Since**: 0.32.4  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| options | <code>Object</code> |  |
+| options.operation | <code>Array.&lt;string&gt;</code> | List of libvips low-level operation names to block. |
+
+**Example** *(Block all TIFF input.)*  
+```js
+sharp.block({
+  operation: ['VipsForeignLoadTiff']
+});
+```
+
+
+## unblock
+> unblock(options)
+
+Unblock libvips operations at runtime.
+
+This is useful for defining a list of allowed operations.
+
+
+**Since**: 0.32.4  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| options | <code>Object</code> |  |
+| options.operation | <code>Array.&lt;string&gt;</code> | List of libvips low-level operation names to unblock. |
+
+**Example** *(Block all input except WebP from the filesystem.)*  
+```js
+sharp.block({
+  operation: ['VipsForeignLoad']
+});
+sharp.unblock({
+  operation: ['VipsForeignLoadWebpFile']
+});
+```
+**Example** *(Block all input except JPEG and PNG from a Buffer or Stream.)*  
+```js
+sharp.block({
+  operation: ['VipsForeignLoad']
+});
+sharp.unblock({
+  operation: ['VipsForeignLoadJpegBuffer', 'VipsForeignLoadPngBuffer']
+});
 ```

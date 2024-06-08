@@ -125,7 +125,7 @@ describe('Tile', function () {
     [1, 8192].forEach(function (size) {
       assert.doesNotThrow(function () {
         sharp().tile({
-          size: size
+          size
         });
       });
     });
@@ -135,7 +135,7 @@ describe('Tile', function () {
     ['zoinks', 1.1, -1, 0, 8193].forEach(function (size) {
       assert.throws(function () {
         sharp().tile({
-          size: size
+          size
         });
       });
     });
@@ -146,7 +146,7 @@ describe('Tile', function () {
       assert.doesNotThrow(function () {
         sharp().tile({
           size: 8192,
-          overlap: overlap
+          overlap
         });
       });
     });
@@ -156,7 +156,7 @@ describe('Tile', function () {
     ['zoinks', 1.1, -1, 8193].forEach(function (overlap) {
       assert.throws(function () {
         sharp().tile({
-          overlap: overlap
+          overlap
         });
       });
     });
@@ -166,7 +166,7 @@ describe('Tile', function () {
     ['fs', 'zip'].forEach(function (container) {
       assert.doesNotThrow(function () {
         sharp().tile({
-          container: container
+          container
         });
       });
     });
@@ -176,7 +176,7 @@ describe('Tile', function () {
     ['zoinks', 1].forEach(function (container) {
       assert.throws(function () {
         sharp().tile({
-          container: container
+          container
         });
       });
     });
@@ -186,7 +186,7 @@ describe('Tile', function () {
     ['dz', 'google', 'zoomify'].forEach(function (layout) {
       assert.doesNotThrow(function () {
         sharp().tile({
-          layout: layout
+          layout
         });
       });
     });
@@ -196,7 +196,7 @@ describe('Tile', function () {
     ['zoinks', 1].forEach(function (layout) {
       assert.throws(function () {
         sharp().tile({
-          layout: layout
+          layout
         });
       });
     });
@@ -254,7 +254,7 @@ describe('Tile', function () {
     [90, 270, -90].forEach(function (angle) {
       assert.doesNotThrow(function () {
         sharp().tile({
-          angle: angle
+          angle
         });
       });
     });
@@ -264,7 +264,7 @@ describe('Tile', function () {
     ['zoinks', 1.1, -1, 27].forEach(function (angle) {
       assert.throws(function () {
         sharp().tile({
-          angle: angle
+          angle
         });
       });
     });
@@ -741,28 +741,6 @@ describe('Tile', function () {
       });
     });
 
-    it('Google layout with depth onepixel', function (done) {
-      const directory = fixtures.path('output.google_depth_onepixel.dzi');
-      fs.rm(directory, { recursive: true }, function () {
-        sharp(fixtures.inputJpg)
-          .tile({
-            layout: 'google',
-            depth: 'onepixel',
-            size: 256
-          })
-          .toFile(directory, function (err, info) {
-            if (err) throw err;
-            assert.strictEqual('dz', info.format);
-            assert.strictEqual(2725, info.width);
-            assert.strictEqual(2225, info.height);
-            assert.strictEqual(3, info.channels);
-            assert.strictEqual('number', typeof info.size);
-
-            assertGoogleTiles(directory, 256, 13, done);
-          });
-      });
-    });
-
     it('Google layout with depth onetile', function (done) {
       const directory = fixtures.path('output.google_depth_onetile.dzi');
       fs.rm(directory, { recursive: true }, function () {
@@ -928,7 +906,7 @@ describe('Tile', function () {
               if (err) throw err;
               assert.strictEqual(true, stat.isFile());
               assert.strictEqual(true, stat.size > 0);
-              extractZip(container, { dir: path.dirname(extractTo) })
+              extractZip(container, { dir: extractTo })
                 .then(() => {
                   assertDeepZoomTiles(directory, 256, 13, done);
                 })
@@ -959,7 +937,7 @@ describe('Tile', function () {
               if (err) throw err;
               assert.strictEqual(true, stat.isFile());
               assert.strictEqual(true, stat.size > 0);
-              extractZip(container, { dir: path.dirname(extractTo) })
+              extractZip(container, { dir: extractTo })
                 .then(() => {
                   assertDeepZoomTiles(directory, 256, 13, done);
                 })
@@ -988,7 +966,7 @@ describe('Tile', function () {
               if (err) throw err;
               assert.strictEqual(true, stat.isFile());
               assert.strictEqual(true, stat.size > 0);
-              extractZip(container, { dir: path.dirname(extractTo) })
+              extractZip(container, { dir: extractTo })
                 .then(() => {
                   assertDeepZoomTiles(directory, 256, 13, done);
                 })

@@ -11,8 +11,10 @@ labels: installation
 
 <!-- Please place an [x] in the box to confirm. -->
 
-- [ ] I have read the [documentation relating to installation](https://sharp.pixelplumbing.com/install).
-- [ ] I have ensured that the architecture and platform of Node.js used for `npm install` is the same as the architecture and platform of Node.js used at runtime.
+- [ ] I have read and understood all of the [documentation relating to installation](https://sharp.pixelplumbing.com/install).
+- [ ] I have searched for known bugs relating to this problem in my choice of package manager.
+
+You must confirm both of these before continuing.
 
 ### Are you using the latest version of sharp?
 
@@ -22,15 +24,37 @@ labels: installation
 
 If you cannot confirm this, please upgrade to the latest version and try again before opening an issue.
 
-If you are using another package which depends on a version of `sharp` that is not the latest, please open an issue against that package instead.
+If you are using another package which depends on a version of `sharp` that is not the latest,
+please open an issue against that package instead.
 
-### Is this a problem with filesystem permissions?
+### Are you using a supported runtime?
 
-If you are using npm v6 or earlier and installing as a `root` or `sudo` user, have you tried with the `npm install --unsafe-perm` flag?
+<!-- Please place an [x] in the relevant box to confirm. -->
 
-If you are using npm v7 or later, does the user running `npm install` own the directory it is run in?
+- [ ] I am using Node.js with a version that satisfies `^18.17.0 || ^20.3.0 || >=21.0.0`
+- [ ] I am using Deno
+- [ ] I am using Bun
 
-If you are using the `ignore-scripts` feature of `npm`, have you tried with the `npm install --ignore-scripts=false` flag?
+If you cannot confirm any of these,
+please upgrade to the latest version
+and try again before opening an issue.
+
+### Are you using a supported package manager and installing optional dependencies?
+
+<!-- Please place an [x] in the relevant box to confirm. -->
+
+- [ ] I am using npm >= 9.6.5 with `--include=optional`
+- [ ] I am using yarn >= 3.2.0
+- [ ] I am using pnpm >= 7.1.0 with `--no-optional=false`
+- [ ] I am using Deno
+- [ ] I am using Bun
+
+If you cannot confirm any of these, please upgrade to the latest version of your chosen package manager
+and ensure you are allowing the installation of optional or multi-platform dependencies before opening an issue.
+
+### What is the complete error message, including the full stack trace?
+
+<!-- Please provide the error message and stack trace here. -->
 
 ### What is the complete output of running `npm install --verbose --foreground-scripts sharp` in an empty directory?
 

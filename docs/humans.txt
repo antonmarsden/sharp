@@ -272,3 +272,27 @@ GitHub: https://github.com/janaz
 
 Name: Lachlan Newman
 GitHub: https://github.com/LachlanNewman
+
+Name: BJJ
+GitHub: https://github.com/bianjunjie1981
+
+Name: Dennis Beatty
+GitHub: https://github.com/dnsbty
+
+Name: Ingvar Stepanyan
+GitHub: https://github.com/RReverser
+
+Name: Tamás András Horváth
+GitHub: https://github.com/icetee
+
+Name: Aaron Che
+GitHub: https://github.com/yolopunk
+
+Name: Mert Alev
+GitHub: https://github.com/mertalev
+
+Name: Adriaan Meuris
+GitHub: https://github.com/adriaanmeuris
+
+Name: Richard Hillmann
+GitHub: https://github.com/project0

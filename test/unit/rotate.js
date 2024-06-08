@@ -192,6 +192,23 @@ describe('Rotation', function () {
       });
   });
 
+  it('Auto-rotate by 270 degrees, rectangular output ignoring aspect ratio', function (done) {
+    sharp(fixtures.inputJpgWithLandscapeExif8)
+      .resize(320, 240, { fit: sharp.fit.fill })
+      .rotate()
+      .toBuffer(function (err, data, info) {
+        if (err) throw err;
+        assert.strictEqual(320, info.width);
+        assert.strictEqual(240, info.height);
+        sharp(data).metadata(function (err, metadata) {
+          if (err) throw err;
+          assert.strictEqual(320, metadata.width);
+          assert.strictEqual(240, metadata.height);
+          done();
+        });
+      });
+  });
+
   it('Rotate by 30 degrees, rectangular output ignoring aspect ratio', function (done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240, { fit: sharp.fit.fill })
@@ -336,6 +353,21 @@ describe('Rotation', function () {
     )
   );
 
+  it('Animated image rotate 180', () =>
+    assert.doesNotReject(() => sharp(fixtures.inputGifAnimated, { animated: true })
+      .rotate(180)
+      .toBuffer()
+    )
+  );
+
+  it('Animated image rotate non-180 rejects', () =>
+    assert.rejects(() => sharp(fixtures.inputGifAnimated, { animated: true })
+      .rotate(90)
+      .toBuffer(),
+    /Rotate is not supported for multi-page images/
+    )
+  );
+
   it('Multiple rotate emits warning', () => {
     let warningMessage = '';
     const s = sharp();
@@ -385,6 +417,7 @@ describe('Rotation', function () {
   it('Flip and flop', function (done) {
     sharp(fixtures.inputJpg)
       .resize(320)
+      .flip()
       .flop()
       .toBuffer(function (err, data, info) {
         if (err) throw err;
@@ -472,5 +505,45 @@ describe('Rotation', function () {
     assert.strictEqual(r, 54);
     assert.strictEqual(g, 64);
     assert.strictEqual(b, 30);
+  });
+
+  it('Resize after affine-based rotation does not overcompute', async () =>
+    sharp({
+      create: {
+        width: 4640,
+        height: 2610,
+        channels: 3,
+        background: 'black'
+      }
+    })
+      .rotate(28)
+      .resize({ width: 640, height: 360 })
+      .raw()
+      .timeout({ seconds: 5 })
+      .toBuffer()
+  );
+
+  it('Rotate 90 then resize with inside fit', async () => {
+    const data = await sharp({ create: { width: 16, height: 8, channels: 3, background: 'red' } })
+      .rotate(90)
+      .resize({ width: 6, fit: 'inside' })
+      .png({ compressionLevel: 0 })
+      .toBuffer();
+
+    const { width, height } = await sharp(data).metadata();
+    assert.strictEqual(width, 6);
+    assert.strictEqual(height, 12);
+  });
+
+  it('Resize with inside fit then rotate 90', async () => {
+    const data = await sharp({ create: { width: 16, height: 8, channels: 3, background: 'red' } })
+      .resize({ width: 6, fit: 'inside' })
+      .rotate(90)
+      .png({ compressionLevel: 0 })
+      .toBuffer();
+
+    const { width, height } = await sharp(data).metadata();
+    assert.strictEqual(width, 3);
+    assert.strictEqual(height, 6);
   });
 });

@@ -1,13 +1,217 @@
 # Changelog
 
+## v0.33 - *gauge*
+
+Requires libvips v8.15.2
+
+### v0.33.5 - TBD
+
+* Ensure option to force use of a globally-installed libvips works correctly.
+  [#4111](https://github.com/lovell/sharp/pull/4111)
+  [@project0](https://github.com/project0)
+
+### v0.33.4 - 16th May 2024
+
+* Remove experimental status from `pipelineColourspace`.
+
+* Reduce default concurrency when musl thread over-subscription detected.
+
+* TypeScript: add missing definitions for `OverlayOptions`.
+  [#4048](https://github.com/lovell/sharp/pull/4048)
+  [@ike-gg](https://github.com/ike-gg)
+
+* Install: add advanced option to force use of a globally-installed libvips.
+  [#4060](https://github.com/lovell/sharp/issues/4060)
+
+* Expose `bilinear` resizing kernel (and interpolator).
+  [#4061](https://github.com/lovell/sharp/issues/4061)
+
+* Ensure `extend` operation stays sequential for multi-page TIFF (regression in 0.32.0).
+  [#4069](https://github.com/lovell/sharp/issues/4069)
+
+* Tighten validation of constructor `text` integer properties.
+  [#4071](https://github.com/lovell/sharp/issues/4071)
+
+* Simplify internal StaySequential logic.
+  [#4074](https://github.com/lovell/sharp/pull/4074)
+  [@kleisauke](https://github.com/kleisauke)
+
+* Ensure negate operation occurs after profile conversion.
+  [#4096](https://github.com/lovell/sharp/pull/4096)
+  [@adriaanmeuris](https://github.com/adriaanmeuris)
+
+### v0.33.3 - 23rd March 2024
+
+* Upgrade to libvips v8.15.2 for upstream bug fixes.
+
+* Ensure `keepIccProfile` retains P3 and CMYK input profiles.
+  [#3906](https://github.com/lovell/sharp/issues/3906)
+  [#4008](https://github.com/lovell/sharp/issues/4008)
+
+* Ensure `text.wrap` property can accept `word-char` as value.
+  [#4028](https://github.com/lovell/sharp/pull/4028)
+  [@yolopunk](https://github.com/yolopunk)
+
+* Ensure `clone` takes a deep copy of existing options.
+  [#4029](https://github.com/lovell/sharp/issues/4029)
+
+* Add `bitdepth` option to `heif` output (prebuilt binaries support 8-bit only).
+  [#4036](https://github.com/lovell/sharp/pull/4036)
+  [@mertalev](https://github.com/mertalev)
+
+### v0.33.2 - 12th January 2024
+
+* Upgrade to libvips v8.15.1 for upstream bug fixes.
+
+* TypeScript: add definition for `keepMetadata`.
+  [#3914](https://github.com/lovell/sharp/pull/3914)
+  [@abhi0498](https://github.com/abhi0498)
+
+* Ensure `extend` operation stays sequential when copying (regression in 0.32.0).
+  [#3928](https://github.com/lovell/sharp/issues/3928)
+
+* Improve error handling for unsupported multi-page rotation.
+  [#3940](https://github.com/lovell/sharp/issues/3940)
+
+### v0.33.1 - 17th December 2023
+
+* Add support for Yarn Plug'n'Play filesystem layout.
+  [#3888](https://github.com/lovell/sharp/issues/3888)
+
+* Emit warning when attempting to use invalid ICC profiles.
+  [#3895](https://github.com/lovell/sharp/issues/3895)
+
+* Ensure `VIPS_NOVECTOR` environment variable is respected.
+  [#3897](https://github.com/lovell/sharp/pull/3897)
+  [@icetee](https://github.com/icetee)
+
+### v0.33.0 - 29th November 2023
+
+* Drop support for Node.js 14 and 16, now requires Node.js ^18.17.0 or >= 20.3.0
+
+* Prebuilt binaries distributed via npm registry and installed via package manager.
+
+* Building from source requires dependency on `node-addon-api`.
+
+* Remove `sharp.vendor`.
+
+* Partially deprecate `withMetadata()`, use `withExif()` and `withIccProfile()`.
+
+* Add experimental support for WebAssembly-based runtimes.
+  [@RReverser](https://github.com/RReverser)
+
+* Options for `trim` operation must be an Object, add new `lineArt` option.
+  [#2363](https://github.com/lovell/sharp/issues/2363)
+
+* Improve luminance of `tint` operation with weighting function.
+  [#3338](https://github.com/lovell/sharp/issues/3338)
+  [@jcupitt](https://github.com/jcupitt)
+
+* Ensure all `Error` objects contain a `stack` property.
+  [#3653](https://github.com/lovell/sharp/issues/3653)
+
+* Make `compression` option of `heif` mandatory to help reduce HEIF vs HEIC confusion.
+  [#3740](https://github.com/lovell/sharp/issues/3740)
+
+* Ensure correct interpretation of 16-bit raw input.
+  [#3808](https://github.com/lovell/sharp/issues/3808)
+
+* Add support for `miniswhite` when using TIFF output.
+  [#3812](https://github.com/lovell/sharp/pull/3812)
+  [@dnsbty](https://github.com/dnsbty)
+
+* TypeScript: add missing definition for `withMetadata` boolean.
+  [#3823](https://github.com/lovell/sharp/pull/3823)
+  [@uhthomas](https://github.com/uhthomas)
+
+* Add more fine-grained control over output metadata.
+  [#3824](https://github.com/lovell/sharp/issues/3824)
+
+* Ensure multi-page extract remains sequential.
+  [#3837](https://github.com/lovell/sharp/issues/3837)
+
 ## v0.32 - *flow*
 
-Requires libvips v8.14.2
+Requires libvips v8.14.5
 
-### v0.32.2 - TBD
+### v0.32.6 - 18th September 2023
+
+* Upgrade to libvips v8.14.5 for upstream bug fixes.
+
+* Ensure composite tile images are fully decoded (regression in 0.32.0).
+  [#3767](https://github.com/lovell/sharp/issues/3767)
+
+* Ensure `withMetadata` can add ICC profiles to RGB16 output.
+  [#3773](https://github.com/lovell/sharp/issues/3773)
+
+* Ensure `withMetadata` does not reduce 16-bit images to 8-bit (regression in 0.32.5).
+  [#3773](https://github.com/lovell/sharp/issues/3773)
+
+* TypeScript: Add definitions for block and unblock.
+  [#3799](https://github.com/lovell/sharp/pull/3799)
+  [@ldrick](https://github.com/ldrick)
+
+### v0.32.5 - 15th August 2023
+
+* Upgrade to libvips v8.14.4 for upstream bug fixes.
+
+* TypeScript: Add missing `WebpPresetEnum` to definitions.
+  [#3748](https://github.com/lovell/sharp/pull/3748)
+  [@pilotso11](https://github.com/pilotso11)
+
+* Ensure compilation using musl v1.2.4.
+  [#3755](https://github.com/lovell/sharp/pull/3755)
+  [@kleisauke](https://github.com/kleisauke)
+
+* Ensure resize with a `fit` of `inside` respects 90/270 degree rotation.
+  [#3756](https://github.com/lovell/sharp/issues/3756)
+
+* TypeScript: Ensure `minSize` property of `WebpOptions` is boolean.
+  [#3758](https://github.com/lovell/sharp/pull/3758)
+  [@sho-xizz](https://github.com/sho-xizz)
+
+* Ensure `withMetadata` adds default sRGB profile.
+  [#3761](https://github.com/lovell/sharp/issues/3761)
+
+### v0.32.4 - 21st July 2023
+
+* Upgrade to libvips v8.14.3 for upstream bug fixes.
+
+* Expose ability to (un)block low-level libvips operations by name.
+
+* Prebuilt binaries: restore support for tile-based output.
+  [#3581](https://github.com/lovell/sharp/issues/3581)
+
+### v0.32.3 - 14th July 2023
+
+* Expose `preset` option for WebP output.
+  [#3639](https://github.com/lovell/sharp/issues/3639)
+
+* Ensure decoding remains sequential for all operations (regression in 0.32.2).
+  [#3725](https://github.com/lovell/sharp/issues/3725)
+
+### v0.32.2 - 11th July 2023
+
+* Limit HEIF output dimensions to 16384x16384, matches libvips.
+
+* Ensure exceptions are not thrown when terminating.
+  [#3569](https://github.com/lovell/sharp/issues/3569)
 
 * Ensure the same access method is used for all inputs (regression in 0.32.0).
   [#3669](https://github.com/lovell/sharp/issues/3669)
+
+* Improve detection of jp2 filename extensions.
+  [#3674](https://github.com/lovell/sharp/pull/3674)
+  [@bianjunjie1981](https://github.com/bianjunjie1981)
+
+* Guard use of smartcrop premultiplied option to prevent warning (regression in 0.32.1).
+  [#3710](https://github.com/lovell/sharp/issues/3710)
+
+* Prevent over-compute in affine-based rotate before resize.
+  [#3722](https://github.com/lovell/sharp/issues/3722)
+
+* Allow sequential read for EXIF-based auto-orientation.
+  [#3725](https://github.com/lovell/sharp/issues/3725)
 
 ### v0.32.1 - 27th April 2023
 

@@ -5,7 +5,7 @@
 
 const os = require('os');
 const fs = require('fs');
-const { exec } = require('child_process');
+const { exec, execSync } = require('child_process');
 
 const async = require('async');
 const Benchmark = require('benchmark');
@@ -40,8 +40,10 @@ const heightPng = 540;
 // Disable libvips cache to ensure tests are as fair as they can be
 sharp.cache(false);
 
-// Spawn one thread per CPU
-sharp.concurrency(os.cpus().length);
+// Spawn one thread per physical CPU core
+const physicalCores = Number(execSync('lscpu -p | egrep -v "^#" | sort -u -t, -k 2,4 | wc -l', { encoding: 'utf-8' }).trim());
+console.log(`Detected ${physicalCores} physical cores`);
+sharp.concurrency(physicalCores);
 
 async.series({
   jpeg: function (callback) {
@@ -109,7 +111,7 @@ async.series({
     jpegSuite.add('squoosh-lib-buffer-buffer', {
       defer: true,
       fn: function (deferred) {
-        const pool = new squoosh.ImagePool();
+        const pool = new squoosh.ImagePool(os.cpus().length);
         const image = pool.ingestImage(inputJpgBuffer);
         image.decoded
           .then(function () {
@@ -188,8 +190,8 @@ async.series({
           srcPath: fixtures.inputJpg,
           dstPath: outputJpg,
           quality: 0.8,
-          width: width,
-          height: height,
+          width,
+          height,
           format: 'jpg',
           filter: 'Lanczos'
         }, function (err) {
@@ -652,7 +654,7 @@ async.series({
             throw err;
           } else {
             image
-              .resize(width, heightPng)
+              .resize(width, heightPng, jimp.RESIZE_BICUBIC)
               .deflateLevel(6)
               .filterType(0)
               .getBuffer(jimp.MIME_PNG, function (err) {
@@ -673,7 +675,7 @@ async.series({
             throw err;
           } else {
             image
-              .resize(width, heightPng)
+              .resize(width, heightPng, jimp.RESIZE_BICUBIC)
               .deflateLevel(6)
               .filterType(0)
               .write(outputPng, function (err) {
@@ -707,7 +709,7 @@ async.series({
     pngSuite.add('squoosh-lib-buffer-buffer', {
       defer: true,
       fn: function (deferred) {
-        const pool = new squoosh.ImagePool();
+        const pool = new squoosh.ImagePool(os.cpus().length);
         const image = pool.ingestImage(inputPngBuffer);
         image.decoded
           .then(function () {
@@ -793,7 +795,7 @@ async.series({
         imagemagick.resize({
           srcPath: fixtures.inputPngAlphaPremultiplicationLarge,
           dstPath: outputPng,
-          width: width,
+          width,
           height: heightPng,
           filter: 'Lanczos',
           customArgs: [

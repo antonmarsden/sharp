@@ -1,5 +1,7 @@
 ## tint
-Tint the image using the provided chroma while preserving the image luminance.
+> tint(tint) ⇒ <code>Sharp</code>
+
+Tint the image using the provided colour.
 An alpha channel may be present and will be unchanged by the operation.
 
 
@@ -10,7 +12,7 @@ An alpha channel may be present and will be unchanged by the operation.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| rgb | <code>string</code> \| <code>Object</code> | parsed by the [color](https://www.npmjs.org/package/color) module to extract chroma values. |
+| tint | <code>string</code> \| <code>Object</code> | Parsed by the [color](https://www.npmjs.org/package/color) module. |
 
 **Example**  
 ```js
@@ -21,6 +23,8 @@ const output = await sharp(input)
 
 
 ## greyscale
+> greyscale([greyscale]) ⇒ <code>Sharp</code>
+
 Convert to 8-bit greyscale; 256 shades of grey.
 This is a linear operation. If the input image is in a non-linear colour space such as sRGB, use `gamma()` with `greyscale()` for the best results.
 By default the output image will be web-friendly sRGB and contain three (identical) color channels.
@@ -41,6 +45,8 @@ const output = await sharp(input).greyscale().toBuffer();
 
 
 ## grayscale
+> grayscale([grayscale]) ⇒ <code>Sharp</code>
+
 Alternative spelling of `greyscale`.
 
 
@@ -52,13 +58,13 @@ Alternative spelling of `greyscale`.
 
 
 ## pipelineColourspace
+> pipelineColourspace([colourspace]) ⇒ <code>Sharp</code>
+
 Set the pipeline colourspace.
 
 The input image will be converted to the provided colourspace at the start of the pipeline.
 All operations will use this colourspace before converting to the output colourspace,
 as defined by [toColourspace](#tocolourspace).
-
-This feature is experimental and has not yet been fully-tested with all operations.
 
 
 **Throws**:
@@ -82,6 +88,8 @@ await sharp(input)
 
 
 ## pipelineColorspace
+> pipelineColorspace([colorspace]) ⇒ <code>Sharp</code>
+
 Alternative spelling of `pipelineColourspace`.
 
 
@@ -97,6 +105,8 @@ Alternative spelling of `pipelineColourspace`.
 
 
 ## toColourspace
+> toColourspace([colourspace]) ⇒ <code>Sharp</code>
+
 Set the output colourspace.
 By default output image will be web-friendly sRGB, with additional channels interpreted as alpha channels.
 
@@ -120,6 +130,8 @@ await sharp(input)
 
 
 ## toColorspace
+> toColorspace([colorspace]) ⇒ <code>Sharp</code>
+
 Alternative spelling of `toColourspace`.
 
 

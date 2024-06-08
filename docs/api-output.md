@@ -1,4 +1,6 @@
 ## toFile
+> toFile(fileOut, [callback]) ⇒ <code>Promise.&lt;Object&gt;</code>
+
 Write output image data to a file.
 
 If an explicit output format is not selected, it will be inferred from the extension,
@@ -39,6 +41,8 @@ sharp(input)
 
 
 ## toBuffer
+> toBuffer([options], [callback]) ⇒ <code>Promise.&lt;Buffer&gt;</code>
+
 Write output to a Buffer.
 JPEG, PNG, WebP, AVIF, TIFF, GIF and raw pixel data output are supported.
 
@@ -107,15 +111,157 @@ await sharp(pixelArray, { raw: { width, height, channels } })
 ```
 
 
-## withMetadata
-Include all metadata (EXIF, XMP, IPTC) from the input image in the output image.
-This will also convert to and add a web-friendly sRGB ICC profile unless a custom
-output profile is provided.
+## keepExif
+> keepExif() ⇒ <code>Sharp</code>
 
-The default behaviour, when `withMetadata` is not used, is to convert to the device-independent
-sRGB colour space and strip all metadata, including the removal of any ICC profile.
+Keep all EXIF metadata from the input image in the output image.
 
 EXIF metadata is unsupported for TIFF output.
+
+
+**Since**: 0.33.0  
+**Example**  
+```js
+const outputWithExif = await sharp(inputWithExif)
+  .keepExif()
+  .toBuffer();
+```
+
+
+## withExif
+> withExif(exif) ⇒ <code>Sharp</code>
+
+Set EXIF metadata in the output image, ignoring any EXIF in the input image.
+
+
+**Throws**:
+
+- <code>Error</code> Invalid parameters
+
+**Since**: 0.33.0  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| exif | <code>Object.&lt;string, Object.&lt;string, string&gt;&gt;</code> | Object keyed by IFD0, IFD1 etc. of key/value string pairs to write as EXIF data. |
+
+**Example**  
+```js
+const dataWithExif = await sharp(input)
+  .withExif({
+    IFD0: {
+      Copyright: 'The National Gallery'
+    },
+    IFD3: {
+      GPSLatitudeRef: 'N',
+      GPSLatitude: '51/1 30/1 3230/100',
+      GPSLongitudeRef: 'W',
+      GPSLongitude: '0/1 7/1 4366/100'
+    }
+  })
+  .toBuffer();
+```
+
+
+## withExifMerge
+> withExifMerge(exif) ⇒ <code>Sharp</code>
+
+Update EXIF metadata from the input image in the output image.
+
+
+**Throws**:
+
+- <code>Error</code> Invalid parameters
+
+**Since**: 0.33.0  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| exif | <code>Object.&lt;string, Object.&lt;string, string&gt;&gt;</code> | Object keyed by IFD0, IFD1 etc. of key/value string pairs to write as EXIF data. |
+
+**Example**  
+```js
+const dataWithMergedExif = await sharp(inputWithExif)
+  .withExifMerge({
+    IFD0: {
+      Copyright: 'The National Gallery'
+    }
+  })
+  .toBuffer();
+```
+
+
+## keepIccProfile
+> keepIccProfile() ⇒ <code>Sharp</code>
+
+Keep ICC profile from the input image in the output image.
+
+Where necessary, will attempt to convert the output colour space to match the profile.
+
+
+**Since**: 0.33.0  
+**Example**  
+```js
+const outputWithIccProfile = await sharp(inputWithIccProfile)
+  .keepIccProfile()
+  .toBuffer();
+```
+
+
+## withIccProfile
+> withIccProfile(icc, [options]) ⇒ <code>Sharp</code>
+
+Transform using an ICC profile and attach to the output image.
+
+This can either be an absolute filesystem path or
+built-in profile name (`srgb`, `p3`, `cmyk`).
+
+
+**Throws**:
+
+- <code>Error</code> Invalid parameters
+
+**Since**: 0.33.0  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| icc | <code>string</code> |  | Absolute filesystem path to output ICC profile or built-in profile name (srgb, p3, cmyk). |
+| [options] | <code>Object</code> |  |  |
+| [options.attach] | <code>number</code> | <code>true</code> | Should the ICC profile be included in the output image metadata? |
+
+**Example**  
+```js
+const outputWithP3 = await sharp(input)
+  .withIccProfile('p3')
+  .toBuffer();
+```
+
+
+## keepMetadata
+> keepMetadata() ⇒ <code>Sharp</code>
+
+Keep all metadata (EXIF, ICC, XMP, IPTC) from the input image in the output image.
+
+The default behaviour, when `keepMetadata` is not used, is to convert to the device-independent
+sRGB colour space and strip all metadata, including the removal of any ICC profile.
+
+
+**Since**: 0.33.0  
+**Example**  
+```js
+const outputWithMetadata = await sharp(inputWithMetadata)
+  .keepMetadata()
+  .toBuffer();
+```
+
+
+## withMetadata
+> withMetadata([options]) ⇒ <code>Sharp</code>
+
+Keep most metadata (EXIF, XMP, IPTC) from the input image in the output image.
+
+This will also convert to and add a web-friendly sRGB ICC profile if appropriate.
+
+Allows orientation and density to be set or updated.
 
 
 **Throws**:
@@ -123,38 +269,16 @@ EXIF metadata is unsupported for TIFF output.
 - <code>Error</code> Invalid parameters
 
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| [options] | <code>Object</code> |  |  |
-| [options.orientation] | <code>number</code> |  | value between 1 and 8, used to update the EXIF `Orientation` tag. |
-| [options.icc] | <code>string</code> | <code>&quot;&#x27;srgb&#x27;&quot;</code> | Filesystem path to output ICC profile, relative to `process.cwd()`, defaults to built-in sRGB. |
-| [options.exif] | <code>Object.&lt;Object&gt;</code> | <code>{}</code> | Object keyed by IFD0, IFD1 etc. of key/value string pairs to write as EXIF data. |
-| [options.density] | <code>number</code> |  | Number of pixels per inch (DPI). |
+| Param | Type | Description |
+| --- | --- | --- |
+| [options] | <code>Object</code> |  |
+| [options.orientation] | <code>number</code> | Used to update the EXIF `Orientation` tag, integer between 1 and 8. |
+| [options.density] | <code>number</code> | Number of pixels per inch (DPI). |
 
 **Example**  
 ```js
-sharp('input.jpg')
+const outputSrgbWithMetadata = await sharp(inputRgbWithMetadata)
   .withMetadata()
-  .toFile('output-with-metadata.jpg')
-  .then(info => { ... });
-```
-**Example**  
-```js
-// Set output EXIF metadata
-const data = await sharp(input)
-  .withMetadata({
-    exif: {
-      IFD0: {
-        Copyright: 'The National Gallery'
-      },
-      IFD3: {
-        GPSLatitudeRef: 'N',
-        GPSLatitude: '51/1 30/1 3230/100',
-        GPSLongitudeRef: 'W',
-        GPSLongitude: '0/1 7/1 4366/100'
-      }
-    }
-  })
   .toBuffer();
 ```
 **Example**  
@@ -167,6 +291,8 @@ const data = await sharp(input)
 
 
 ## toFormat
+> toFormat(format, options) ⇒ <code>Sharp</code>
+
 Force output to a given format.
 
 
@@ -190,6 +316,8 @@ const data = await sharp(input)
 
 
 ## jpeg
+> jpeg([options]) ⇒ <code>Sharp</code>
+
 Use these JPEG options for output image.
 
 
@@ -235,11 +363,17 @@ const data = await sharp(input)
 
 
 ## png
+> png([options]) ⇒ <code>Sharp</code>
+
 Use these PNG options for output image.
 
-By default, PNG output is full colour at 8 or 16 bits per pixel.
+By default, PNG output is full colour at 8 bits per pixel.
+
 Indexed PNG input at 1, 2 or 4 bits per pixel is converted to 8 bits per pixel.
 Set `palette` to `true` for slower, indexed PNG output.
+
+For 16 bits per pixel output, convert to `rgb16` via
+[toColourspace](/api-colour#tocolourspace).
 
 
 **Throws**:
@@ -275,9 +409,19 @@ const data = await sharp(input)
   .png({ palette: true })
   .toBuffer();
 ```
+**Example**  
+```js
+// Output 16 bits per pixel RGB(A)
+const data = await sharp(input)
+ .toColourspace('rgb16')
+ .png()
+ .toBuffer();
+```
 
 
 ## webp
+> webp([options]) ⇒ <code>Sharp</code>
+
 Use these WebP options for output image.
 
 
@@ -294,6 +438,7 @@ Use these WebP options for output image.
 | [options.lossless] | <code>boolean</code> | <code>false</code> | use lossless compression mode |
 | [options.nearLossless] | <code>boolean</code> | <code>false</code> | use near_lossless compression mode |
 | [options.smartSubsample] | <code>boolean</code> | <code>false</code> | use high quality chroma subsampling |
+| [options.preset] | <code>string</code> | <code>&quot;&#x27;default&#x27;&quot;</code> | named preset for preprocessing/filtering, one of: default, photo, picture, drawing, icon, text |
 | [options.effort] | <code>number</code> | <code>4</code> | CPU effort, between 0 (fastest) and 6 (slowest) |
 | [options.loop] | <code>number</code> | <code>0</code> | number of animation iterations, use 0 for infinite animation |
 | [options.delay] | <code>number</code> \| <code>Array.&lt;number&gt;</code> |  | delay(s) between animation frames (in milliseconds) |
@@ -318,6 +463,8 @@ const outputWebp = await sharp(inputWebp, { animated: true })
 
 
 ## gif
+> gif([options]) ⇒ <code>Sharp</code>
+
 Use these GIF options for the output image.
 
 The first entry in the palette is reserved for transparency.
@@ -377,6 +524,8 @@ await sharp('in.gif', { animated: true })
 
 
 ## jp2
+> jp2([options]) ⇒ <code>Sharp</code>
+
 Use these JP2 options for output image.
 
 Requires libvips compiled with support for OpenJPEG.
@@ -419,6 +568,8 @@ const data = await sharp(input)
 
 
 ## tiff
+> tiff([options]) ⇒ <code>Sharp</code>
+
 Use these TIFF options for output image.
 
 The `density` can be set in pixels/inch via [withMetadata](#withmetadata)
@@ -445,6 +596,7 @@ instead of providing `xres` and `yres` in pixels/mm.
 | [options.yres] | <code>number</code> | <code>1.0</code> | vertical resolution in pixels/mm |
 | [options.resolutionUnit] | <code>string</code> | <code>&quot;&#x27;inch&#x27;&quot;</code> | resolution unit options: inch, cm |
 | [options.bitdepth] | <code>number</code> | <code>8</code> | reduce bitdepth to 1, 2 or 4 bit |
+| [options.miniswhite] | <code>boolean</code> | <code>false</code> | write 1-bit images as miniswhite |
 
 **Example**  
 ```js
@@ -460,12 +612,12 @@ sharp('input.svg')
 
 
 ## avif
+> avif([options]) ⇒ <code>Sharp</code>
+
 Use these AVIF options for output image.
 
-Whilst it is possible to create AVIF images smaller than 16x16 pixels,
-most web browsers do not display these properly.
-
 AVIF image sequences are not supported.
+Prebuilt binaries support a bitdepth of 8 only.
 
 
 **Throws**:
@@ -481,6 +633,7 @@ AVIF image sequences are not supported.
 | [options.lossless] | <code>boolean</code> | <code>false</code> | use lossless compression |
 | [options.effort] | <code>number</code> | <code>4</code> | CPU effort, between 0 (fastest) and 9 (slowest) |
 | [options.chromaSubsampling] | <code>string</code> | <code>&quot;&#x27;4:4:4&#x27;&quot;</code> | set to '4:2:0' to use chroma subsampling |
+| [options.bitdepth] | <code>number</code> | <code>8</code> | set bitdepth to 8, 10 or 12 bit |
 
 **Example**  
 ```js
@@ -497,6 +650,8 @@ const data = await sharp(input)
 
 
 ## heif
+> heif(options) ⇒ <code>Sharp</code>
+
 Use these HEIF options for output image.
 
 Support for patent-encumbered HEIC images using `hevc` compression requires the use of a
@@ -511,12 +666,13 @@ globally-installed libvips compiled with support for libheif, libde265 and x265.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [options] | <code>Object</code> |  | output options |
+| options | <code>Object</code> |  | output options |
+| options.compression | <code>string</code> |  | compression format: av1, hevc |
 | [options.quality] | <code>number</code> | <code>50</code> | quality, integer 1-100 |
-| [options.compression] | <code>string</code> | <code>&quot;&#x27;av1&#x27;&quot;</code> | compression format: av1, hevc |
 | [options.lossless] | <code>boolean</code> | <code>false</code> | use lossless compression |
 | [options.effort] | <code>number</code> | <code>4</code> | CPU effort, between 0 (fastest) and 9 (slowest) |
 | [options.chromaSubsampling] | <code>string</code> | <code>&quot;&#x27;4:4:4&#x27;&quot;</code> | set to '4:2:0' to use chroma subsampling |
+| [options.bitdepth] | <code>number</code> | <code>8</code> | set bitdepth to 8, 10 or 12 bit |
 
 **Example**  
 ```js
@@ -527,6 +683,8 @@ const data = await sharp(input)
 
 
 ## jxl
+> jxl([options]) ⇒ <code>Sharp</code>
+
 Use these JPEG-XL (JXL) options for output image.
 
 This feature is experimental, please do not use in production systems.
@@ -556,6 +714,8 @@ Image metadata (EXIF, XMP) is unsupported.
 
 
 ## raw
+> raw([options]) ⇒ <code>Sharp</code>
+
 Force output to be raw, uncompressed pixel data.
 Pixel ordering is left-to-right, top-to-bottom, without padding.
 Channel ordering will be RGB or RGBA for non-greyscale colourspaces.
@@ -591,6 +751,8 @@ const data = await sharp('input.png')
 
 
 ## tile
+> tile([options]) ⇒ <code>Sharp</code>
+
 Use tile-based deep zoom (image pyramid) output.
 
 Set the format and options for tile images via the `toFormat`, `jpeg`, `png` or `webp` functions.
@@ -616,7 +778,7 @@ The prebuilt binaries do not include this - see
 | [options.angle] | <code>number</code> | <code>0</code> | tile angle of rotation, must be a multiple of 90. |
 | [options.background] | <code>string</code> \| <code>Object</code> | <code>&quot;{r: 255, g: 255, b: 255, alpha: 1}&quot;</code> | background colour, parsed by the [color](https://www.npmjs.org/package/color) module, defaults to white without transparency. |
 | [options.depth] | <code>string</code> |  | how deep to make the pyramid, possible values are `onepixel`, `onetile` or `one`, default based on layout. |
-| [options.skipBlanks] | <code>number</code> | <code>-1</code> | threshold to skip tile generation, a value 0 - 255 for 8-bit images or 0 - 65535 for 16-bit images |
+| [options.skipBlanks] | <code>number</code> | <code>-1</code> | Threshold to skip tile generation. Range is 0-255 for 8-bit images, 0-65535 for 16-bit images. Default is 5 for `google` layout, -1 (no skip) otherwise. |
 | [options.container] | <code>string</code> | <code>&quot;&#x27;fs&#x27;&quot;</code> | tile container, with value `fs` (filesystem) or `zip` (compressed file). |
 | [options.layout] | <code>string</code> | <code>&quot;&#x27;dz&#x27;&quot;</code> | filesystem layout, possible values are `dz`, `iiif`, `iiif3`, `zoomify` or `google`. |
 | [options.centre] | <code>boolean</code> | <code>false</code> | centre image in tile. |
@@ -652,6 +814,8 @@ readableStream
 
 
 ## timeout
+> timeout(options) ⇒ <code>Sharp</code>
+
 Set a timeout for processing, in seconds.
 Use a value of zero to continue processing indefinitely, the default behaviour.
 

@@ -130,4 +130,24 @@ describe('AVIF', () => {
       width: 32
     });
   });
+
+  it('Invalid width - too large', async () =>
+    assert.rejects(
+      () => sharp({ create: { width: 16385, height: 16, channels: 3, background: 'red' } }).avif().toBuffer(),
+      /Processed image is too large for the HEIF format/
+    )
+  );
+
+  it('Invalid height - too large', async () =>
+    assert.rejects(
+      () => sharp({ create: { width: 16, height: 16385, channels: 3, background: 'red' } }).avif().toBuffer(),
+      /Processed image is too large for the HEIF format/
+    )
+  );
+
+  it('Invalid bitdepth value throws error', async () => {
+    assert.rejects(
+      () => sharp().avif({ bitdepth: 11 }),
+      /Error: Expected 8, 10 or 12 for bitdepth but received 11 of type number/);
+  });
 });

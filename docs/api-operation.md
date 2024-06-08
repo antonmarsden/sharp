@@ -1,9 +1,11 @@
 ## rotate
+> rotate([angle], [options]) ⇒ <code>Sharp</code>
+
 Rotate the output image by either an explicit angle
 or auto-orient based on the EXIF `Orientation` tag.
 
 If an angle is provided, it is converted to a valid positive degree rotation.
-For example, `-450` will produce a 270deg rotation.
+For example, `-450` will produce a 270 degree rotation.
 
 When rotating by an angle other than a multiple of 90,
 the background colour can be provided with the `background` option.
@@ -11,10 +13,12 @@ the background colour can be provided with the `background` option.
 If no angle is provided, it is determined from the EXIF data.
 Mirroring is supported and may infer the use of a flip operation.
 
-The use of `rotate` implies the removal of the EXIF `Orientation` tag, if any.
+The use of `rotate` without an angle will remove the EXIF `Orientation` tag, if any.
 
 Only one rotation can occur per pipeline.
 Previous calls to `rotate` in the same pipeline will be ignored.
+
+Multi-page images can only be rotated by 180 degrees.
 
 Method order is important when rotating, resizing and/or extracting regions,
 for example `.rotate(x).extract(y)` will produce a different result to `.extract(y).rotate(x)`.
@@ -57,10 +61,10 @@ const resizeThenRotate = await sharp(input)
 
 
 ## flip
+> flip([flip]) ⇒ <code>Sharp</code>
+
 Mirror the image vertically (up-down) about the x-axis.
 This always occurs before rotation, if any.
-
-The use of `flip` implies the removal of the EXIF `Orientation` tag, if any.
 
 This operation does not work correctly with multi-page images.
 
@@ -77,10 +81,10 @@ const output = await sharp(input).flip().toBuffer();
 
 
 ## flop
+> flop([flop]) ⇒ <code>Sharp</code>
+
 Mirror the image horizontally (left-right) about the y-axis.
 This always occurs before rotation, if any.
-
-The use of `flop` implies the removal of the EXIF `Orientation` tag, if any.
 
 
 
@@ -95,6 +99,8 @@ const output = await sharp(input).flop().toBuffer();
 
 
 ## affine
+> affine(matrix, [options]) ⇒ <code>Sharp</code>
+
 Perform an affine transform on an image. This operation will always occur after resizing, extraction and rotation, if any.
 
 You must provide an array of length 4 or a 2x2 affine transformation matrix.
@@ -146,6 +152,8 @@ inputStream
 
 
 ## sharpen
+> sharpen([options], [flat], [jagged]) ⇒ <code>Sharp</code>
+
 Sharpen the image.
 
 When used without parameters, performs a fast, mild sharpen of the output image.
@@ -197,6 +205,8 @@ const data = await sharp(input)
 
 
 ## median
+> median([size]) ⇒ <code>Sharp</code>
+
 Apply median filter.
 When used without parameters the default window is 3x3.
 
@@ -221,6 +231,8 @@ const output = await sharp(input).median(5).toBuffer();
 
 
 ## blur
+> blur([sigma]) ⇒ <code>Sharp</code>
+
 Blur the image.
 
 When used without parameters, performs a fast 3x3 box blur (equivalent to a box linear filter).
@@ -252,6 +264,8 @@ const gaussianBlurred = await sharp(input)
 
 
 ## flatten
+> flatten([options]) ⇒ <code>Sharp</code>
+
 Merge alpha transparency channel, if any, with a background, then remove the alpha channel.
 
 See also [removeAlpha](/api-channel#removealpha).
@@ -272,6 +286,8 @@ await sharp(rgbaInput)
 
 
 ## unflatten
+> unflatten()
+
 Ensure the image has an alpha channel
 with all white pixel values made fully transparent.
 
@@ -297,6 +313,8 @@ await sharp(rgbInput)
 
 
 ## gamma
+> gamma([gamma], [gammaOut]) ⇒ <code>Sharp</code>
+
 Apply a gamma correction by reducing the encoding (darken) pre-resize at a factor of `1/gamma`
 then increasing the encoding (brighten) post-resize at a factor of `gamma`.
 This can improve the perceived brightness of a resized image in non-linear colour spaces.
@@ -319,6 +337,8 @@ Supply a second argument to use a different output gamma value, otherwise the fi
 
 
 ## negate
+> negate([options]) ⇒ <code>Sharp</code>
+
 Produce the "negative" of the image.
 
 
@@ -343,6 +363,8 @@ const output = await sharp(input)
 
 
 ## normalise
+> normalise([options]) ⇒ <code>Sharp</code>
+
 Enhance output image contrast by stretching its luminance to cover a full dynamic range.
 
 Uses a histogram-based approach, taking a default range of 1% to 99% to reduce sensitivity to noise at the extremes.
@@ -373,6 +395,8 @@ const output = await sharp(input)
 
 
 ## normalize
+> normalize([options]) ⇒ <code>Sharp</code>
+
 Alternative spelling of normalise.
 
 
@@ -392,6 +416,8 @@ const output = await sharp(input)
 
 
 ## clahe
+> clahe(options) ⇒ <code>Sharp</code>
+
 Perform contrast limiting adaptive histogram equalization
 [CLAHE](https://en.wikipedia.org/wiki/Adaptive_histogram_equalization#Contrast_Limited_AHE).
 
@@ -423,6 +449,8 @@ const output = await sharp(input)
 
 
 ## convolve
+> convolve(kernel) ⇒ <code>Sharp</code>
+
 Convolve the image with the specified kernel.
 
 
@@ -457,6 +485,8 @@ sharp(input)
 
 
 ## threshold
+> threshold([threshold], [options]) ⇒ <code>Sharp</code>
+
 Any pixel value greater than or equal to the threshold value will be set to 255, otherwise it will be set to 0.
 
 
@@ -475,6 +505,8 @@ Any pixel value greater than or equal to the threshold value will be set to 255,
 
 
 ## boolean
+> boolean(operand, operator, [options]) ⇒ <code>Sharp</code>
+
 Perform a bitwise boolean operation with operand image.
 
 This operation creates an output image where each pixel is the result of
@@ -499,6 +531,8 @@ the selected bitwise boolean `operation` between the corresponding pixels of the
 
 
 ## linear
+> linear([a], [b]) ⇒ <code>Sharp</code>
+
 Apply the linear formula `a` * input + `b` to the image to adjust image levels.
 
 When a single number is provided, it will be used for all image channels.
@@ -533,7 +567,9 @@ await sharp(rgbInput)
 
 
 ## recomb
-Recomb the image with the specified matrix.
+> recomb(inputMatrix) ⇒ <code>Sharp</code>
+
+Recombine the image with the specified matrix.
 
 
 **Throws**:
@@ -556,13 +592,15 @@ sharp(input)
   ])
   .raw()
   .toBuffer(function(err, data, info) {
-    // data contains the raw pixel data after applying the recomb
+    // data contains the raw pixel data after applying the matrix
     // With this example input, a sepia filter has been applied
   });
 ```
 
 
 ## modulate
+> modulate([options]) ⇒ <code>Sharp</code>
+
 Transforms the image using brightness, saturation, hue rotation, and lightness.
 Brightness and lightness both operate on luminance, with the difference being that
 brightness is multiplicative whereas lightness is additive.
@@ -607,7 +645,7 @@ const output = await sharp(input)
 ```
 **Example**  
 ```js
-// decreate brightness and saturation while also hue-rotating by 90 degrees
+// decrease brightness and saturation while also hue-rotating by 90 degrees
 const output = await sharp(input)
   .modulate({
     brightness: 0.5,
