@@ -74,6 +74,7 @@ struct PipelineBaton {
   bool flatten;
   std::vector<double> flattenBackground;
   bool unflatten;
+  bool terrainRgb;
   bool negate;
   bool negateAlpha;
   double blurSigma;
@@ -241,6 +242,7 @@ struct PipelineBaton {
     flatten(false),
     flattenBackground{ 0.0, 0.0, 0.0 },
     unflatten(false),
+    terrainRgb(false),
     negate(false),
     negateAlpha(true),
     blurSigma(0.0),

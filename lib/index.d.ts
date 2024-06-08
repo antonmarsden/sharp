@@ -435,6 +435,11 @@ declare namespace sharp {
         unflatten(): Sharp;
 
         /**
+         * @returns A sharp instance that can be used to chain operations
+         */
+        terrainRgb(): Sharp;
+
+        /**
          * Apply a gamma correction by reducing the encoding (darken) pre-resize at a factor of 1/gamma then increasing the encoding (brighten) post-resize at a factor of gamma.
          * This can improve the perceived brightness of a resized image in non-linear colour spaces.
          * JPEG and WebP input images will not take advantage of the shrink-on-load performance optimisation when applying a gamma correction.

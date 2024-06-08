@@ -585,6 +585,11 @@ class PipelineWorker : public Napi::AsyncWorker {
         image = sharp::Recomb(image, baton->recombMatrix);
       }
 
+      // Convert DEM to Terrain RGB
+      if (baton->terrainRgb) {
+        image = sharp::DemToTerrainRgb(image);
+      }
+
       // Modulate
       if (baton->brightness != 1.0 || baton->saturation != 1.0 || baton->hue != 0.0 || baton->lightness != 0.0) {
         image = sharp::Modulate(image, baton->brightness, baton->saturation, baton->hue, baton->lightness);
@@ -1475,6 +1480,7 @@ Napi::Value pipeline(const Napi::CallbackInfo& info) {
   baton->flatten = sharp::AttrAsBool(options, "flatten");
   baton->flattenBackground = sharp::AttrAsVectorOfDouble(options, "flattenBackground");
   baton->unflatten = sharp::AttrAsBool(options, "unflatten");
+  baton->terrainRgb = sharp::AttrAsBool(options, "terrainRgb");
   baton->negate = sharp::AttrAsBool(options, "negate");
   baton->negateAlpha = sharp::AttrAsBool(options, "negateAlpha");
   baton->blurSigma = sharp::AttrAsDouble(options, "blurSigma");

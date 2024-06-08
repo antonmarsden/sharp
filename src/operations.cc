@@ -346,6 +346,32 @@ namespace sharp {
     }
   }
 
+//  const adj = (t) => {
+//    return Math.round((10000.0 + t) * 10.0);
+//  };
+//
+//  const rFunc = (t) => {
+//    return Math.floor(adj(t) / 256.0 / 256.0);
+//  };
+//  const gFunc = (t) => {
+//    return Math.floor((adj(t) - rFunc(t) * 256.0 * 256.0) / 256.0);
+//  };
+//  const bFunc = (t) => {
+//    return adj(t) - rFunc(t) * 256.0 * 256.0 - gFunc(t) * 256.0;
+//  };
+
+  /*
+   * Convert DEM (floating point) to Terrain RGB
+   */
+  VImage DemToTerrainRgb(VImage image) {
+    if (HasAlpha(image)) {
+      VImage alpha = image[image.bands() - 1];
+      VImage noAlpha = RemoveAlpha(image);
+      VImage raw = (noAlpha.colourspace(VIPS_INTERPRETATION_B_W) + 10000.0) * 10;
+    }
+    return image;
+  }
+
   /*
    * Ensure the image is in a given colourspace
    */
