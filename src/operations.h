@@ -92,9 +92,9 @@ namespace sharp {
   VImage Unflatten(VImage image);
 
   /*
-   * Convert DEM to Terrain RGB
+   * Convert elevation to Terrain RGB
    */
-  VImage DemToTerrainRgb(VImage image);
+  VImage ElevationToTerrainRgb(VImage image);
 
   /*
    * Recomb with a Matrix of the given bands/channel size.

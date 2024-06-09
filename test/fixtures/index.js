@@ -137,6 +137,8 @@ module.exports = {
 
   inputJpgClahe: getPath('concert.jpg'), // public domain - https://www.flickr.com/photos/mars_/14389236779/
 
+  inputMilfordSound: getPath('milford_sound.tif'),
+
   testPattern: getPath('test-pattern.png'),
 
   // Path for tests requiring human inspection

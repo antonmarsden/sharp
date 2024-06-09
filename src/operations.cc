@@ -377,15 +377,21 @@ namespace sharp {
 //  };
 
   /*
-   * Convert DEM (floating point) to Terrain RGB
+   * Convert elevation (float / int16) to Terrain RGB
    */
-  VImage DemToTerrainRgb(VImage image) {
-    if (HasAlpha(image)) {
-      VImage alpha = image[image.bands() - 1];
-      VImage noAlpha = RemoveAlpha(image);
-      VImage raw = (noAlpha.colourspace(VIPS_INTERPRETATION_B_W) + 10000.0) * 10;
-    }
-    return image;
+  VImage ElevationToTerrainRgb(VImage image) {
+//    VImage copy = image.copy(VImage::option()->set("interpretation", VIPS_INTERPRETATION_GREY16)->set("format", VIPS_FORMAT_FLOAT));
+    VImage normalised = (image.cast(VIPS_FORMAT_FLOAT) + 10000.0) * 10.0;
+//    return normalised;
+    VImage r = (normalised / 65536).cast(VIPS_FORMAT_UCHAR);
+//    VImage r = copy.cast(VIPS_FORMAT_UCHAR);
+    VImage g = ((normalised % 65536) / 256).cast(VIPS_FORMAT_UCHAR);
+    VImage b = (normalised % 256).round(VIPS_OPERATION_ROUND_RINT).cast(VIPS_FORMAT_UCHAR);
+
+    VImage result =  r.bandjoin(g).bandjoin(b);
+    return result.copy(VImage::option()->set( "interpretation", VIPS_INTERPRETATION_sRGB));
+//    std::vector<VImage> bands = { r, g, b };
+//    return VImage::bandjoin(bands);
   }
 
   /*

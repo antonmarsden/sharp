@@ -139,6 +139,7 @@
   "dependencies": {
     "color": "^4.2.3",
     "detect-libc": "^2.0.3",
+    "node-gyp": "^10.1.0",
     "semver": "^7.6.0"
   },
   "optionalDependencies": {

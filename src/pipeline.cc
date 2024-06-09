@@ -615,7 +615,7 @@ class PipelineWorker : public Napi::AsyncWorker {
 
       // Convert DEM to Terrain RGB
       if (baton->terrainRgb) {
-        image = sharp::DemToTerrainRgb(image);
+        image = sharp::ElevationToTerrainRgb(image);
       }
 
       // Modulate
